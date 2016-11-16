@@ -1,0 +1,20 @@
+{
+  "name": "combat",
+  "mainFile": "combat.html",
+  "layer": 1,
+  "rect": {
+    "left": 950,
+    "top": 350,
+    "right": 1430,
+    "bottom": 700
+  },
+  "handlesCharacter": true,
+  "handlesChat": true,
+  "handlesBeginChat": true,
+  "handlesConsole": true,
+  "handlesInput": true,
+  "handlesAnnouncements": true,
+  "handlesEnemyTarget": true,
+  "handlesFriendlyTarget": true,
+  "handlesCombatLog": true
+}
