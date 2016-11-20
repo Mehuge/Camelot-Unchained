@@ -26,12 +26,12 @@ function select(state: AppState) : LogProps {
 
 // Component
 export function Log(props: LogProps) {
-  let entries = {};
+  let entries: JSX.Element[] = [];
   if (props.targets) {
     for (let key in props.targets) {
       const target: CombatTarget = props.targets[key];
       entries = target.entries.map((entry) =>
-        <div>
+        <div key={entry.id}>
           <span className="from name">{entry.fromName}</span>
           <span className="from faction">{entry.fromFaction}</span>
           <span className="to name">{entry.toName}</span>
