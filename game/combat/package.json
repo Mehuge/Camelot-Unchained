@@ -72,6 +72,9 @@
     "clean:wyrmling": "rimraf %localappdata%/CSE/CamelotUnchained/10/INTERFACE/combat",
     "copy:wyrmling": "copyup build/**/* %localappdata%/CSE/CamelotUnchained/10/INTERFACE/combat",
     "build:wyrmling": "npm run build && npm run clean:wyrmling && npm run copy:wyrmling",
+    "clean:wyrmlingprep": "rimraf %localappdata%/CSE/CamelotUnchained/11/INTERFACE/combat",
+    "copy:wyrmlingprep": "copyup build/**/* %localappdata%/CSE/CamelotUnchained/11/INTERFACE/combat",
+    "build:wyrmlingprep": "npm run build && npm run clean:wyrmlingprep && npm run copy:wyrmlingprep",
     "clean:cube": "rimraf %localappdata%/CSE/CamelotUnchained/27/INTERFACE/combat",
     "copy:cube": "copyup build/**/* %localappdata%/CSE/CamelotUnchained/27/INTERFACE/combat",
     "build:cube": "npm run build && npm run clean:cube && npm run copy:cube"
@@ -89,7 +92,9 @@
     "react-redux": "^4.4.5",
     "react-select": "^1.0.0-beta13",
     "react-slick": "^0.12.2",
+    "react-virtualized": "^8.5.3",
     "redux": "^3.5.2",
+    "redux-grid": "^0.5.8",
     "redux-thunk": "^2.1.0",
     "sass-importer-node": "^1.0.0",
     "yargs-parser": "^2.4.0"

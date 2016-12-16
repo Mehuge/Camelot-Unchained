@@ -13,9 +13,24 @@ export interface CombatEffect {
 }
 
 export interface CombatResource {
+  received?: number;
+  sent: number;
+  type: number;
+}
+
+export interface CombatDamage {
+  part: number;
   received: number;
   sent: number;
   type: number;
+  woundsInflicted: number;
+}
+
+export interface CombatDisruption {
+  received: number;
+  sent: number;
+  source: string;
+  tracksInterrupted: boolean;
 }
 
 export interface CombatLogEntry {
@@ -25,12 +40,16 @@ export interface CombatLogEntry {
   fromName: string;
   toFaction: number;
   toName: string;
-  activeEffects: CombatEffect[],
-  resources: CombatResource[]
+  errors: string[];
+  activeEffects: CombatEffect[];
+  resources: CombatResource[];
+  damages: CombatDamage[];
+  disruption: CombatDisruption;
 }
 
 export interface CombatTarget {
   entries: CombatLogEntry[];
+  faction: number;
 }
 
 export interface CombatTargets {
@@ -40,13 +59,15 @@ export interface CombatTargets {
 // state definition
 export interface CombatState {
   targets: CombatTargets;
+  current: string;
 }
 
 // initial state
 function initialState () : CombatState {
   console.log('Combat: initialState: entries[]');
   return {
-    targets: {}
+    targets: {},
+    current: null
   };
 }
 
@@ -55,10 +76,15 @@ export function addEntry(entry: CombatLogEntry) : any {
   return { type: "entries-add", entry: entry };
 }
 
+export function selectTarget(target: string) : any {
+  return { type: "select-target", target: target };
+}
+
 declare var deepFreeze : any;
 
 // reducer
 export default function reducer(state: CombatState = initialState(), action: any) : CombatState {
+  console.log('REDUCE ACTION: ' + JSON.stringify(action));
   deepFreeze(state);
   switch(action.type) {
     case "entries-add":
@@ -68,9 +94,16 @@ export default function reducer(state: CombatState = initialState(), action: any
       return Object.assign({}, state, {
         targets: Object.assign({}, targets, {
           [entry.toName]: {
-            entries: (target ? target.entries : []).concat(entry)
+            entries: (target ? target.entries : []).concat(entry),
+            faction: entry.toFaction
           }
-        })
+        }),
+        current: state.current ? state.current : entry.toName
+      });
+    case "select-target":
+      return Object.assign({}, state, {
+        targets: state.targets,
+        current: action.target
       });
   }
   return state;

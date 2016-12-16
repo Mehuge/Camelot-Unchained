@@ -28,24 +28,41 @@ let entryId: number = 0;
 
 // parse combat log event into a CombatLogEntry object
 function parse(entry: any): CombatLogEntry {
-  return {
+  console.log('DISRUPTION: ' + JSON.stringify(entry.disruption));
+  const o : CombatLogEntry = {
     id: entryId++,
     when: new Date(),
     fromName: entry.fromName,
     toName: entry.toName,
     fromFaction: entry.fromFaction,
     toFaction: entry.toFaction,
+    errors: entry.errors,
     activeEffects: entry.activeEffects && entry.activeEffects.map((entry: any) => ({
       action: entry.action,
       duration: entry.duration,
       name: entry.name
     })),
     resources: entry.resources && entry.resources.map((entry: any) => ({
-      received: entry.received,
+      received: entry.recieved,     // note spelling mistake in CU data
       sent: entry.sent,
       type: entry.type
-    }))
+    })),
+    damages: entry.damages && entry.damages.map((entry: any) => ({
+      part: entry.part,
+      received: entry.recieved,     // note spelling mistake in CU data
+      sent: entry.sent,
+      type: entry.type,
+      woundsInflicted: entry.woundsInflicted
+    })),
+    disruption: entry.disruption && {
+      received: entry.disruption.recieved,     // note spelling mistake in CU data
+      sent: entry.disruption.sent,
+      source: entry.disruption.source,
+      tracksInterrupted: entry.disruption.tracksInterupted     // note spelling mistake in CU data
+    }
   };
+  console.log('PARSED: ' + JSON.stringify(o));
+  return o;
 }
 
 // service
@@ -54,8 +71,8 @@ export default function service (store: any) : void {
   console.log('listen for OnCombatLogEvents');
   client.OnCombatLogEvent((e: any) => {
     console.log('OnCombatLogEvent: ' + JSON.stringify(e));
-      for (let i = 0; i < e.length; i++) {
-        store.dispatch(addEntry(parse(e[i])));
-      }
+    for (let i = 0; i < e.length; i++) {
+      store.dispatch(addEntry(parse(e[i])));
+    }
   });
 }

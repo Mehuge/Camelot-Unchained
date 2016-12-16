@@ -4,12 +4,141 @@
 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+
 html, body {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
 }
 
 #combat {
   color: white;
+  width: 100%;
+  height: 100%;
+}
+
+.tab-frame {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  >.tab-bar {
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    flex: none;
+    >.tab {
+      display: inline-block;
+      padding: 0em 0.5em;
+      margin: 0 0.1em 0 0;
+      line-height: 1.2em;
+      background-color: rgba(64,64,64,0.8);
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      &.selected {
+        background-color: rgba(255,255,255,0.8);
+      }
+    }
+    >.TDD {
+      color: limegreen;
+    }
+    >.ARTHURIAN {
+      color: darkred
+    }
+    >.VIKING {
+      color: darkcyan;
+    }
+  }
+
+  >.tab-content {
+    flex-grow: 1;
+    background-color: rgba(0,0,0,0.8);
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+      width: 1em;
+    }
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(64,64,64,0.1);
+      border: 1px solid rgba(0,0,0,0.4);
+      -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.2);
+    }
+
+    >.combat-entry {
+
+      font-size: 80%;
+
+      >.combat-errors {
+        >.error {
+          color: red;
+        }
+      }
+
+      >.combat-damages {
+        >.damage {
+          >span {
+            display: inline-block;
+            padding-right: 0.2em;
+            text-align: right;
+          }
+          >.part {
+            width: 50px;
+            text-align: left;
+          }
+          >.amount {
+            color: red;
+            width: 50px;
+          }
+          >.mitigated {
+            color: gray;
+            width: 50px;
+            text-align: left;
+          }
+          >.type {
+            width: 20px;
+          }
+          >.wounds {
+            color: darkred;
+            width: 20px;
+          }
+        }
+      }
+
+      >.combat-disruption {
+        >span {
+          display: inline-block;
+          padding-right: 0.2em;
+          text-align: right;
+        }
+        >.label {
+          width: 50px;
+          text-align: left;
+        }
+        >.amount {
+          color: red;
+          width: 50px;
+        }
+        >.mitigated {
+          color: gray;
+          width: 50px;
+          text-align: left;
+        }
+        >.source {
+          width: auto;
+        }
+        >.interrupted {
+          color: darkred;
+        }
+      }
+
+    }
+  }
 }
