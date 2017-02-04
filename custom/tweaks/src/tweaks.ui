@@ -1,0 +1,15 @@
+{
+  "name": "tweaks",
+  "mainFile": "index.html",
+  "rect": {
+    "left": 800,
+    "top": 100,
+    "right": 1400,
+    "bottom": 825
+  },
+  "handlesConfig": true,
+  "handlesConsole": true,
+  "handlesChat": true,
+  "handlesInput": true,
+  "handlesMouse": true
+}
