@@ -1,13 +1,15 @@
 import {client} from 'camelot-unchained';
 import {updateConfigVars} from '../actions/config';
 import defaults, {Range, ConfigItemDefaults} from './defaults';
+import {generateOfflineData} from './offline';
 
 export interface ConfigItem {
   name: string;
   type: string;
-  value: string;
-  editable: boolean;
+  value?: string;
+  editable?: boolean;
   range?: Range;
+  dp?: number;
 }
 
 const items: ConfigItem[] = [
@@ -15,6 +17,13 @@ const items: ConfigItem[] = [
 
 export function getItems() {
   return items;
+}
+
+export function setConfig(name: string, value: any) {
+  console.log('setConfig ' + name + ' ' + value);
+  if (typeof client.SendSlashCommand !== "undefined") {
+    client.SendSlashCommand(name + ' ' + value);
+  }
 }
 
 export function init(store: any) : ConfigItem[] {
@@ -54,6 +63,7 @@ export function init(store: any) : ConfigItem[] {
             type: d ? d.type : undefined,
             editable: d ? d.editable : false,
             range: d ? d.range : undefined,
+            dp: d ? d.dp : undefined,
             value: nv[1]
           });
         }
@@ -62,9 +72,7 @@ export function init(store: any) : ConfigItem[] {
   }
 
   function offlineData() {
-    for (let i = 0; i < 1000; i++) {
-        items.push({ name: "TestVar", type: "integer-slider", editable: true, value: "10" });
-    }
+    generateOfflineData(items);
     store.dispatch(updateConfigVars({ items: items }));
   }
 

@@ -23,9 +23,10 @@ body {
       flex-direction: column;
       >.item {
         display: flex;
-        background: linear-gradient(to bottom, #0049c9 0%,#16387f 100%);
+        /* background: linear-gradient(to bottom, #0049c9 0%,#16387f 100%); */
+        background: #222;
         color: white;
-        border-bottom: 1px solid rgba(255,255,255,0.2);
+        border-bottom: 1px solid rgba(0,0,0,0.2);
         border-top: 1px solid transparent;
         flex-direction: row;
         justify-content: space-between;
@@ -38,36 +39,67 @@ body {
           user-select: text;
         }
         .value {
-          width: 150px;
+          width: 50%;
           height: 32px;
           .slider {
-            cursor: default;
+            cursor: pointer;
             position: relative;
             background: rgba(0,0,0,0.5);
-            color: black;
+            color: silver;
             height: 100%;
-            display: flex;
-            flex-direction: row;
             padding: 2px;
+            font-size: 80%;
+            .min, .max, .value {
+              position: absolute;
+            }
             .min, .max {
-              font-size: 80%;
-              color: silver;
+              font-size: 60%;
+            }
+            .min {
+              left: 2px;
+            }
+            .value {
+              left: 0;
+              width: 100%;
+              height: 100%;
+              text-align: center;
+              color: white;
             }
             .max {
-              position: absolute;
               right: 2px;
             }
             .thumb {
-              cursor: pointer;
               position: absolute;
-              font-size: 80%;
-              background: rgba(255,255,255,0.5);
-              padding: 0 2px 0 0;
-              &.left {
-                border-left: 2px solid red;
+              top: 0;
+              background: lime;
+              height: 100%;
+              width: 2px;
+              opacity: 0.5;
+            }
+          }
+          .switch {
+            cursor: pointer;
+            position: relative;
+            width: 50px;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            border-radius: 7px;
+            >.toggle {
+              height: 100%;
+              width: 20px;
+              position: absolute;
+              border-radius: 7px;
+            }
+            &.on {
+              >.toggle {
+                background: lime;
+                right: 0;
               }
-              &.right {
-                border-right: 2px solid red;
+            }
+            &.off {
+              >.toggle {
+                background: darkred;
+                left: 0;
               }
             }
           }

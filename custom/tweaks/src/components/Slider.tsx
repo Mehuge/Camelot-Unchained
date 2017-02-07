@@ -3,8 +3,9 @@ import {Range} from '../services/defaults';
 
 interface SliderProps {
   range: Range
-  step: number;
+  dp?: number;
   value: number;
+  enabled?: boolean;
   onchange?: (value: number) => void;
 }
 
@@ -24,7 +25,7 @@ const Slider = React.createClass<SliderProps, SliderState>({
     const value = props.value;
     const min = range ? range.min : 0;
     const max = range ? range.max : 100;
-    const pos = value / ((max - min) / 100);
+    const pos = (value - min) / ((max - min + 1) / 100);
     this.setState({ pos: pos, value: value });
   },
   componentWillReceiveProps(props: SliderProps) {
@@ -36,13 +37,17 @@ const Slider = React.createClass<SliderProps, SliderState>({
     const range : Range = this.props.range;
     const min = range ? range.min : 0;
     const max = range ? range.max : 100;
-    return ((pos/(max-min+1)*100)|0) + min;
+    const value = (((max-min+1)/100)*pos)+min;
+    if (!props.dp) {
+      return value|0;
+    }
+    return +(Math.round(+(value+'e'+props.dp))+'e-'+props.dp);
   },
   updateValue(value:number) {
     if (value !== this.props.value) {
       console.log('value has changed to ' + value);
-      if (this.props.onChange) {
-        this.props.onChange(value);
+      if (this.props.onchange) {
+        this.props.onchange(value);
       }
     }
   },
@@ -55,6 +60,8 @@ const Slider = React.createClass<SliderProps, SliderState>({
     debugger;
   },
   handleClick(e: React.MouseEvent) {
+    e.preventDefault();
+    if (this.props.enabled === false) return;
     const el = e.currentTarget as HTMLElement;
     // give me the % position of the slider (with fractions)
     const pos = ((e.clientX - el.offsetLeft) / el.offsetWidth * 100);
@@ -67,20 +74,16 @@ const Slider = React.createClass<SliderProps, SliderState>({
     const min = range ? range.min : 0;
     const max = range ? range.max : 100;
     const pos = this.state.pos;
-    const style: any = {};
+    const disabled = this.props.enabled === false;
     const cls: string[] = [ "thumb" ];
-    if (this.state.value < 50) {
-      style['left'] = pos + '%';
-      cls.push('left');
-    } else {
-      style['right'] = (100-pos) + '%';
-      cls.push('right');
-    }
+    const style: any = { left: pos + '%' };
+    if (disabled) cls.push('disabled');
     return (
-      <div className="slider" onClick={this.handleClick}>
+      <div className="slider" onClick={this.handleClick} onDrag={this.handleDrag}>
         <div className="min">{min}</div>
+        <div className="value">{this.state.value}</div>
         <div className="max">{max}</div>
-        <div className={cls.join(' ')} style={style} onDrag={this.handleDrag}>{this.state.value}</div>
+        <div className={cls.join(' ')} style={style}></div>
       </div>
     );
   }
