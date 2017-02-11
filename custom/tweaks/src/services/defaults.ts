@@ -229,6 +229,43 @@ const defaults: ConfigItemMap = {
     type: 'boolean-switch',
     editable: true,
   },
+  'debugShowNormalMap': {
+    type: 'integer-switch',
+    editable: true,
+  },
+  'debugShowNormals': {
+    type: 'integer-switch',
+    editable: true,
+  },
+  'debugShowMetallic': {
+    type: 'integer-switch',
+    editable: true,
+  },
+  'debugShowRoughness': {
+    type: 'integer-switch',
+    editable: true,
+  },
+  'debugShowSpecMask': {
+    type: 'integer-switch',
+    editable: true,
+  },
+  'debugMetallic': {
+    type: 'integer-switch',
+    editable: true,
+  },
+  'debugRoughness': {
+    type: 'integer-switch',
+    editable: true,
+  },
+  'debugSpecMask': {
+    type: 'integer-switch',
+    editable: true,
+  },
+  'snowLevel': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: -1024, max: 1024 }
+  },
   'fogDensity': {
     type: 'float-slider',
     dp: 2,
@@ -359,7 +396,73 @@ const defaults: ConfigItemMap = {
     editable: true,
     range: { min: 0, max: 10 }
   },
+  'maxTimeDebtSimFrames': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 10 }
+  },
+  'minSubdivisionLevelForLoad': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 10 }
+  },
   'skipSpawnLoad': {
+    type: 'boolean-switch',
+    editable: true,
+  },
+  'clackAnchorTollerence': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 10 }
+  },
+  'newCommandPacketIntervalMSecs': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 100 }
+  },
+  'moveChangedPacketIntervalMSecs': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 100 }
+  },
+  'movingPacketIntervalMSecs': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 250 }
+  },
+  'maximumPacketIntervalMSecs': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 500 }
+  },
+  'echoProxy': {
+    type: 'boolean-switch',
+    editable: true,
+  },
+  'ExtraPacketsToKeep': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 10 }
+  },
+  'DebugPacketAcks': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 10 }
+  },
+  'ServerLogging': {
+    type: 'boolean-switch',
+    editable: false,
+  },
+  'JoinChat': {
+    type: 'boolean-switch',
+    editable: true,
+  },
+  'defaultLatencyMilliseconds': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 500 }
+  },
+  'NetTimeouts': {
     type: 'boolean-switch',
     editable: true,
   },
@@ -384,9 +487,10 @@ const defaults: ConfigItemMap = {
     range: { min: 0, max: 50 }
   },
   'NameplateDesiredDistanceToCamera': {
-    type: 'integer-slider',
+    type: 'float-slider',
     editable: true,
-    range: { min: 0, max: 50 }
+    dp: 1,
+    range: { min: 0, max: 10 }
   },
   'invertMouseY': {
     type: 'boolean-switch',
@@ -396,11 +500,27 @@ const defaults: ConfigItemMap = {
     type: 'boolean-switch',
     editable: true,
   },
+  'disableUI': {
+    type: 'boolean-switch',
+    editable: true,
+  },
+  'shutdownDebugging': {
+    type: 'boolean-switch',
+    editable: true,
+  },
+  'startupDebugging': {
+    type: 'boolean-switch',
+    editable: false,
+  },
   'assertTest': {
     type: 'boolean-switch',
     editable: true,
   },
   'fullscreen': {
+    type: 'boolean-switch',
+    editable: true,
+  },
+  'LogNetworkData': {
     type: 'boolean-switch',
     editable: true,
   },
@@ -412,6 +532,15 @@ const defaults: ConfigItemMap = {
   'uiDebugMode': {
     type: 'boolean-switch',
     editable: true,
+  },
+  'diagnostic': {
+    type: 'boolean-switch',
+    editable: false,
+  },
+  'maxTextureAtlasSize': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 16384 }
   },
   'snowY': {
     type: 'float-slider',
@@ -425,6 +554,30 @@ const defaults: ConfigItemMap = {
     editable: true,
     range: { min: 0, max: 1 }
   },
+  'maxTerrainVertTex': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 16 }
+  },
+  'maxTerrainTriTex': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 16 }
+  },
+  'terrShowSubdivisions': {
+    type: 'boolean-switch',
+    editable: true,
+  },
+  'impostorMinTris': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 50 }
+  },
+  'impostorMinVerts': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 100 }
+  },
   'spawnGrass': {
     type: 'boolean-switch',
     editable: true,
@@ -432,6 +585,21 @@ const defaults: ConfigItemMap = {
   'loadWaterPlane': {
     type: 'boolean-switch',
     editable: true,
+  },
+  'impostorFirstSizeCategory': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 1000 }
+  },
+  'maxPhysicsSubdivision': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: -10, max: 10 }
+  },
+  'minPhysicsSubdivision': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: -10, max: 10 }
   },
   'TargetIndicatorHeight': {
     type: 'integer-slider',
@@ -465,32 +633,173 @@ const defaults: ConfigItemMap = {
     editable: true,
     range: { min: 0, max: 2 }
   },
-
-  'dragonHeightVariance': {
+  'starUVColCount': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 50 }
+  },
+  'starDrawDist': {
+    type: 'float-slider',
+    editable: true,
+    dp: 1,
+    range: { min: 0, max: 10 }
+  },
+  'starTexCellSize': {
+    type: 'float-slider',
+    editable: true,
+    dp: 3,
+    range: { min: 0, max: 1 }
+  },
+  'starScale': {
+    type: 'float-slider',
+    editable: true,
+    dp: 3,
+    range: { min: 0, max: 1 }
+  },
+  'moonRenderScale': {
+    type: 'float-slider',
+    editable: true,
+    dp: 1,
+    range: { min: 0, max: 10 }
+  },
+  'moonRenderDist': {
+    type: 'float-slider',
+    editable: true,
+    dp: 1,
+    range: { min: 0, max: 10 }
+  },
+  'sunRenderScale': {
+    type: 'float-slider',
+    editable: true,
+    dp: 1,
+    range: { min: 0, max: 10 }
+  },
+  'sunRenderDist': {
+    type: 'float-slider',
+    editable: true,
+    dp: 1,
+    range: { min: 0, max: 10 }
+  },
+  'sunInterpThreshold': {
+    type: 'float-slider',
+    editable: true,
+    dp: 4,
+    range: { min: 0, max: 2 }
+  },
+  'sunSnapThreshold': {
+    type: 'float-slider',
+    editable: true,
+    dp: 4,
+    range: { min: 0, max: 2 }
+  },
+  'sunInterpTime': {
+    type: 'float-slider',
+    editable: true,
+    dp: 4,
+    range: { min: 0, max: 2 }
+  },
+  'dagronCurve': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 10 }
+  },
+  'dagronHeightVariance': {
     type: 'integer-slider',
     editable: true,
     range: { min: 0, max: 1000 }
   },
-  'dragonHeight': {
+  'dagronHeight': {
     type: 'integer-slider',
     editable: true,
     range: { min: 0, max: 1000 }
   },
-  'dragonScale': {
+  'dagronScale': {
     type: 'float-slider',
     dp: 2,
     editable: true,
     range: { min: 0, max: 2 }
   },
-  'dragonSpace': {
+  'dagronSpace': {
     type: 'integer-slider',
     editable: true,
     range: { min: 0, max: 1000 }
   },
-  'dragonSpeed': {
+  'dagronSpeed': {
     type: 'integer-slider',
     editable: true,
     range: { min: 0, max: 1000 }
+  },
+  'sunGlowRadius': {
+    type: 'float-slider',
+    editable: true,
+    dp: 1,
+    range: { min: 0, max: 1 }
+  },
+  'skyDomeScale': {
+    type: 'float-slider',
+    editable: true,
+    dp: 1,
+    range: { min: 0, max: 2 }
+  },
+  'skylightHackBrightening': {
+    type: 'float-slider',
+    editable: true,
+    dp: 2,
+    range: { min: 0, max: 1 }
+  },
+  'skylightHackLumaLowThreshold': {
+    type: 'float-slider',
+    editable: true,
+    dp: 2,
+    range: { min: 0, max: 1 }
+  },
+  'skylightHackLumaHighThreshold': {
+    type: 'float-slider',
+    editable: true,
+    dp: 2,
+    range: { min: 0, max: 1 }
+  },
+  'moonPhase': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: -5, max: 5 }
+  },
+  'moonPeriod': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 10000 }
+  },
+  'stormState': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: -1, max: 10 }
+  },
+  'skyDomeUpdateInterval': {
+    type: 'float-slider',
+    editable: true,
+    dp: 1,
+    range: { min: 0, max: 10 }
+  },
+  'season': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: 0, max: 4 }
+  },
+  'daytime': {
+    type: 'float-slider',
+    editable: true,
+    dp: 2,
+    range: { min: 0, max: 24 }
+  },
+  'dayLength': {
+    type: 'integer-slider',
+    editable: true,
+    range: { min: -1, max: 3600 }
+  },
+  'skyDomeTextureSize': {
+    type: 'integer-slider',
+    editable: false,
+    range: { min: 128, max: 1024 }
   },
 
   'shadowsEnabled': {

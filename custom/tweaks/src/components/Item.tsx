@@ -33,6 +33,12 @@ function typeToWidget(item: ConfigItem) {
             enabled={item.editable}
             onchange={(on: boolean) => { setConfig(item.name, on ? "true" : "false") }}/>
       );
+    case 'integer-switch':
+      return (
+        <Switch on={(item.value as any|0) > 0}
+            enabled={item.editable}
+            onchange={(on: boolean) => { setConfig(item.name, on ? "1" : "0") }}/>
+      );
     case 'sub-heading':
       return <span></span>;
     default:

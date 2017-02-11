@@ -76,6 +76,11 @@ body {
               width: 2px;
               opacity: 0.5;
             }
+            &.moving>.thumb {
+              background: #7FFF00;
+              box-shadow: 0 0 16px yellow;
+              opacity: 1;
+            }
           }
           .switch {
             cursor: pointer;
