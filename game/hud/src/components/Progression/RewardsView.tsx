@@ -6,10 +6,10 @@
  */
 
 import * as React from 'react';
-import styled from 'react-emotion';
 import { Spinner } from '@csegames/camelot-unchained';
 import { CharacterProgressionData, CharacterAdjustmentDBModel } from '@csegames/camelot-unchained/lib/graphql/schema';
 import { GraphQL, GraphQLResult } from '@csegames/camelot-unchained/lib/graphql/react';
+import { LoadingContainer, InnerContainer, ProgressionTitle, ProgressionCorner, ProgressionContent, ProgressionLoading, ProgressionFooter } from './style';
 
 const progressionAdjustmentFragments = `
   fragment SkillPartLevelReason on CharacterAdjustmentReasonSkillPartLevel {
@@ -95,20 +95,6 @@ ${progressionAdjustmentFragments}
 }
 `;
 
-const LoadingContainer = styled('div')`
-  position: relative;
-  pointer-events: all;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 500px;
-  height: 400px;
-  padding: 20px;
-  background-color: gray;
-  color: white;
-`;
-
 type QueryType = {
   myprogression: CharacterProgressionData;
 };
@@ -151,8 +137,8 @@ class RewardsView extends React.Component<Props, State> {
           // Adjustment is a new item
           adjustmentDescription.push(
             <li>
-              <div>Item{addItem.unitCount > 1 ? 's' : null} Received:</div><div>{addItem.unitCount}x {addItem.staticDefinitionID}</div><br />
-              <div>Reason:</div><div>{reasonDescription}</div>
+              <div className="ProgressionLabel">Item{addItem.unitCount > 1 ? 's' : null} Received:</div><div className="ProgressionValue">{addItem.unitCount}x {addItem.staticDefinitionID}</div>
+              <div className="RewardLabel">Reason:</div><div className="RewardValue">{reasonDescription}</div>
             </li>
           );
         } else if (playerStat) {
@@ -160,16 +146,16 @@ class RewardsView extends React.Component<Props, State> {
           if (playerStat.newBonus !== playerStat.previousBonus) {
             adjustmentDescription.push(
               <li>
-                <div>Attribute Bonus Applied:</div><div>+{playerStat.newBonus - playerStat.previousBonus} to {playerStat.playerStat}</div><br />
-                <div>Reason:</div><div>{reasonDescription}</div>
+                <div className="ProgressionLabel">Attribute Bonus Applied:</div><div className="ProgressionValue">+{playerStat.newBonus - playerStat.previousBonus} to {playerStat.playerStat}</div>
+                <div className="RewardLabel">Reason:</div><div className="RewardValue">{reasonDescription}</div>
               </li>
             );
           }
           if (playerStat.newProgressionPoints - playerStat.previousProgressionPoints > 0) {
             adjustmentDescription.push(
               <li>
-                <div>Attribute Progression Increase:</div><div>{playerStat.newProgressionPoints - playerStat.previousProgressionPoints} points for {playerStat.playerStat}</div><br />
-                <div>Reason:</div><div>{reasonDescription}</div>
+                <div className="ProgressionLabel">Attribute Progression Increase:</div><div className="ProgressionValue">{playerStat.newProgressionPoints - playerStat.previousProgressionPoints} points for {playerStat.playerStat}</div>
+                <div className="RewardLabel">Reason:</div><div className="RewardValue">{reasonDescription}</div>
               </li>
             );
           }
@@ -177,8 +163,8 @@ class RewardsView extends React.Component<Props, State> {
           // Adjustment is a skill node
           adjustmentDescription.push(
             <li>
-              <div>Skill Node Applied:</div><div>{skillNode.skillNodePath}</div><br />
-              <div>Reason:</div><div>{reasonDescription}</div>
+              <div className="ProgressionLabel">Skill Node Applied:</div><div className="ProgressionValue">{skillNode.skillNodePath}</div>
+              <div className="RewardLabel">Reason:</div><div className="RewardValue">{reasonDescription}</div>
             </li>
           );
         } else if (skillPart) {
@@ -187,16 +173,16 @@ class RewardsView extends React.Component<Props, State> {
           if (skillPart.newLevel !== skillPart.previousLevel) {
             adjustmentDescription.push(
               <li>
-                <div>New Skill Level Obtained:</div><div>Level {skillPart.newLevel} {skillPart.skillPartID}</div><br />
-                <div>Reason:</div><div>{reasonDescription}</div>
+                <div className="ProgressionLabel">New Skill Level Obtained:</div><div className="ProgressionValue">Level {skillPart.newLevel} {skillPart.skillPartID}</div>
+                <div className="RewardLabel">Reason:</div><div className="RewardValue">{reasonDescription}</div>
               </li>
             );
           }
           if (skillPart.newProgressPoints - skillPart.previousProgressionPoints > 0) {
             adjustmentDescription.push(
               <li>
-                <div>Skill Progression Increase:</div><div>{skillPart.newProgressPoints - skillPart.previousProgressionPoints} points for {skillPart.skillPartID}</div><br />
-                <div>Reason:</div><div>{reasonDescription}</div>
+                <div className="ProgressionLabel">Skill Progression Increase:</div><div className="ProgressionValue">{skillPart.newProgressPoints - skillPart.previousProgressionPoints} points for {skillPart.skillPartID}</div>
+                <div className="RewardLabel">Reason:</div><div className="RewardValue">{reasonDescription}</div>
               </li>
             );
           }
@@ -218,16 +204,34 @@ class RewardsView extends React.Component<Props, State> {
         {(graphql: GraphQLResult<QueryType>) => {
           if (graphql.lastError && graphql.lastError !== 'OK') {
             return (
-              <LoadingContainer>
-                <div>{graphql.lastError}</div>
-              </LoadingContainer>
+            <LoadingContainer>
+              <ProgressionTitle><h6>Progression</h6></ProgressionTitle>
+              <InnerContainer>
+                <ProgressionCorner />
+                <ProgressionContent>
+                  <ProgressionLoading>
+                  <div>{graphql.lastError}</div>
+                  </ProgressionLoading>
+                </ProgressionContent>
+                <ProgressionFooter />
+              </InnerContainer>
+            </LoadingContainer>
             )
           }
           if (graphql.loading || !graphql.data || !graphql.data.myprogression) {
             return (
               <LoadingContainer>
-                <div>Loading...</div>
-                <Spinner />
+                <ProgressionTitle><h6>Progression</h6></ProgressionTitle>
+                <InnerContainer>
+                  <ProgressionCorner />
+                  <ProgressionContent>
+                    <ProgressionLoading>
+                      <div>Loading...</div>
+                      <Spinner />
+                    </ProgressionLoading>
+                  </ProgressionContent>
+                  <ProgressionFooter />
+                </InnerContainer>
               </LoadingContainer>
             );
           }

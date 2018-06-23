@@ -14,156 +14,23 @@ import { CharacterProgressionData } from '@csegames/camelot-unchained/lib/graphq
 import { GraphQLResult } from '@csegames/camelot-unchained/lib/graphql/react';
 import { toSentenceCase } from '@csegames/camelot-unchained/lib/utils/textUtils';
 import RewardsView from './RewardsView';
+import { LoadingContainer, InnerContainer, ProgressionTitle, ProgressionCorner, ProgressionContent, ProgressionLoading, ProgressionFooter } from './style';
 
 const Container = styled('div')`
   position: relative;
 `;
 
-const LoadingContainer = styled('div')`
-  position: relative;
-`;
-
-const InnerContainer = styled('div')`
-  position: relative;
-  pointer-events: all;
-  width: 800px;
-  height: 400px;
-  padding: 0px;
-  margin:0 auto;
-  background-color: gray;
-  color: white;
-  background: url("images/progression/progress-bg-grey.png") no-repeat;
-  z-index: 1;
-  border: 1px solid #6e6c6c;
-  box-shadow: 0 0 30px 0 #000;
-`;
-
-const ProgressionTitle = styled('div')`
-  text-align: center;
-  background: url("images/progression/progress-top-title.png") center top no-repeat;
-  margin: 0 auto -9px auto;
-  position: relative;
-  z-index: 999;
-  width: 319px;
-  height: 23px;
-  h6 {
-    color: #848484;
-    font-size: 10px;
-    text-transform: uppercase;
-    padding: 7px 0 0 0;
-    margin: 0 0 0 0;
-    font-family: 'Caudex', serif;
-  }
-`;
-
-const ProgressionCorner = styled('div')`
-  position: absolute;
-  min-width: 800px;
-  min-height: 400px;
-  background:
-  url("images/progression/progress-ornament-top-left.png") left 0 top 0 no-repeat,
-  url("images/progression/progress-ornament-top-right.png") right 0 top 0 no-repeat,
-  url("images/progression/progress-ornament-bottom-left.png") left 0 bottom 0 no-repeat,
-  url("images/progression/progress-ornament-bottom-right.png") right 0 bottom 0 no-repeat;
-  z-index: 1;
-`;
-
-const ProgressionContent = styled('div')`
-  height: 295px;
-  margin-top: 30px;
-  max-height: 295px;
-  padding: 10px 20px;
-  box-sizing: border-box;
-  overflow-x: hidden;
-  overflow-y: auto;
-  border-top: 1px solid #3b3634;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 10;
-  width: calc(100% - 40px);
-  position: absolute;
-  h2 {
-    font-family: 'Caudex', serif;
-    font-size: 18px;
-  }
-  h3 {
-    font-size: 18px;
-    color: #706764;
-    text-transform: uppercase;
-    border-bottom: 1px solid #706764;
-  }
-  ul {
-    margin-bottom: 20px !important;
-    li {
-      background: #191919;
-      margin-bottom: 4px;
-      div {
-        display: inline-block;
-        padding: 5px 10px;
-      }
-      div:first-of-type {
-        width: calc(40% - 25px);
-        background: #141414;
-        border-left: 5px solid #3b3634;
-      }
-      div:last-of-type {
-        width: calc(60% - 20px);
-        background: #191919;
-        color: #595553;
-      }
-      &:hover {
-        background: #191919;
-        div:first-of-type {
-          border-left: 5px solid #93866c;
-        }
-        div:last-of-type {
-          color: #93866c;
-        }
-      }
-    }
-  }
-  .ProgressList {
-    background-color: rgba(24, 24, 24, 0.35);
-    margin-bottom: 30px;
-    border: 1px solid #313131;
-    border-left: none;
-    border-right: none;
-    padding: 20px;
-  }
-  .NoReward {
-    width: calc(100% - 25px);
-    background: #141414;
-    border-left: 5px solid #3b3634;
-    padding: 5px 10px;
-  }
-`;
-
 const ProgressionBorder = styled('div')`
-  background: url("images/progression/progression-daily-item-top.png") center bottom no-repeat;
+  background: url(images/progression/progression-daily-item-top.png) center bottom no-repeat;
   width: 108px;
   height: 9px;
   margin: 0 auto -4px;
 }
 `;
 
-const ProgressionLoading = styled('div')`
-  text-align: center;
-  margin-top: 130px;
-`;
-
-const ProgressionFooter = styled('div')`
-  position: absolute;
-  min-width: 800px;
-  height: 55px;
-  bottom: 0;
-  left: 0;
-  background: rgba(55, 52, 51, 0.3);
-  border-top: 1px solid #3b3634;
-  z-index: 11;
-`;
-
 const CollectButton = styled('div')`
   &.btn {
-    background: url("images/progression/button-off.png") no-repeat;
+    background: url(images/progression/button-off.png) no-repeat;
     width: 95px;
     height: 30px;;
     border: none;
@@ -176,7 +43,7 @@ const CollectButton = styled('div')`
     text-align: center;
     line-height: 30px;
     &:hover {
-      background: url("images/progression/button-on.png") no-repeat;
+      background: url(images/progression/button-on.png) no-repeat;
       color: #fff;
     }
   }
@@ -201,13 +68,13 @@ const ProgressionFooterOuter = styled('div')` {
 `;
 
 const ProgressionFooterLeft = styled('div')` {
-  background: url("images/progression/progress-botnav-left-ornament.png") no-repeat;
+  background: url(images/progression/progress-botnav-left-ornament.png) no-repeat;
   height: 55px;
   width: 75px
 `;
 
 const ProgressionFooterRight = styled('div')` {
-  background: url("images/progression/progress-botnav-right-ornament.png") no-repeat;
+  background: url(images/progression/progress-botnav-right-ornament.png) no-repeat;
   height: 55px;
   width: 75px
 `;
@@ -322,7 +189,7 @@ class ProgressionView extends React.Component<Props, State> {
     return (
       <Container>
         <ProgressionTitle><h6>Progression</h6></ProgressionTitle>
-        <InnerContainer>
+        <InnerContainer className="cse-ui-scroller-thumbonly">
           <CloseButton onClick={this.props.onCloseClick} />
           <ProgressionCorner />
           <ProgressionContent>
@@ -336,14 +203,14 @@ class ProgressionView extends React.Component<Props, State> {
                 if (damage[damageKey][damageType] > 0) {
                   damageDetails.push(
                     <li>
-                      <div>
+                      <div className="ProgressionLabel">
                         {toSentenceCase(damageKey)} ({
                           damageType === 'playerCharacter' ? 'Player' :
                           damageType === 'nonPlayerCharacter' ? 'NPC' :
                           toSentenceCase(damageType)
                         }):
                       </div>
-                      <div>{damage[damageKey][damageType]}</div>
+                      <div className="ProgressionValue">{damage[damageKey][damageType]}</div>
                     </li>
                   );
                 }
@@ -352,13 +219,13 @@ class ProgressionView extends React.Component<Props, State> {
 
             let plotDetails: JSX.Element[] = [];
             Object.keys(plots).map((plotKey) => {
-              if (plots[plotKey] > 0) plotDetails.push(<li><div>{toSentenceCase(plotKey)}: </div><div>{plots[plotKey]}</div></li>);
+              if (plots[plotKey] > 0) plotDetails.push(<li><div className="ProgressionLabel">{toSentenceCase(plotKey)}: </div><div className="ProgressionValue">{plots[plotKey]}</div></li>);
             });
 
             let craftingDetails: JSX.Element[] = [];
             Object.keys(crafting).map((craftingKey) => {
               Object.keys(crafting[craftingKey]).map((craftingType) => {
-                if (crafting[craftingKey][craftingType] > 0) craftingDetails.push(<li><div>{toSentenceCase(craftingKey)} ({toSentenceCase(craftingType)}): </div><div>{crafting[craftingKey][craftingType]}</div></li>);
+                if (crafting[craftingKey][craftingType] > 0) craftingDetails.push(<li><div className="ProgressionLabel">{toSentenceCase(craftingKey)} ({toSentenceCase(craftingType)}): </div><div className="ProgressionValue">{crafting[craftingKey][craftingType]}</div></li>);
               });
             });
 
@@ -371,16 +238,16 @@ class ProgressionView extends React.Component<Props, State> {
               if (scenario.outcome === 'Lose') scenariosLost++;
               if (scenario.outcome === 'Draw') scenariosTied++;
             });
-            if (scenariosWon > 0) scenarioDetails.push(<li><div>Scenarios Won: </div><div>{scenariosWon}</div></li>);
-            if (scenariosLost > 0) scenarioDetails.push(<li><div>Scenarios Lost: </div><div>{scenariosLost}</div></li>);
-            if (scenariosTied > 0) scenarioDetails.push(<li><div>Scenarios Tied: </div><div>{scenariosTied}</div></li>);
+            if (scenariosWon > 0) scenarioDetails.push(<li><div className="ProgressionLabel">Scenarios Won: </div><div className="ProgressionValue">{scenariosWon}</div></li>);
+            if (scenariosLost > 0) scenarioDetails.push(<li><div className="ProgressionLabel">Scenarios Lost: </div><div className="ProgressionValue">{scenariosLost}</div></li>);
+            if (scenariosTied > 0) scenarioDetails.push(<li><div className="ProgressionLabel">Scenarios Tied: </div><div className="ProgressionValue">{scenariosTied}</div></li>);
 
             let skillDetails: JSX.Element[] = [];
             skillPartsUsed.map((skillPartUsed) => {
               skillDetails.push(
                 <li>
-                  <div>Skill Used ({ skillPartUsed.skillPartID }):</div>
-                  <div>{ skillPartUsed.usedInCombatCount + skillPartUsed.usedNonCombatCount }</div>
+                  <div className="ProgressionLabel">Skill Used ({ skillPartUsed.skillPartID }):</div>
+                  <div className="ProgressionValue">{ skillPartUsed.usedInCombatCount + skillPartUsed.usedNonCombatCount }</div>
                 </li>
               );
             });
@@ -393,10 +260,10 @@ class ProgressionView extends React.Component<Props, State> {
                   <ul>
                     <h3>General Details</h3>
                     { secondsActive ? (
-                      <li><div>Time Active: </div><div>{moment.duration(secondsActive, 'seconds').humanize()}</div></li>
+                      <li><div className="ProgressionLabel">Time Active: </div><div className="ProgressionValue">{moment.duration(secondsActive, 'seconds').humanize()}</div></li>
                     ): null }
                     { distanceMoved ? (
-                      <li><div>Distance Traveled: </div><div>{distanceMoved} meters</div></li>
+                      <li><div className="ProgressionLabel">Distance Traveled: </div><div className="ProgressionValue">{distanceMoved} meters</div></li>
                     ): null }
                   </ul>
                   { damageDetails.length > 0 ? (
@@ -429,7 +296,7 @@ class ProgressionView extends React.Component<Props, State> {
                       {skillDetails}
                     </ul>
                   ): null }
-                  <h3>Rewards</h3>
+                  <h3 className="RewardHeadline">Rewards</h3>
                   <RewardsView key={uncollectedDay.id} logID={uncollectedDay.id} />
                 </div>
               </div>
