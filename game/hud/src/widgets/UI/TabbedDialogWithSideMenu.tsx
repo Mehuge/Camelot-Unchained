@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { TabbedDialog, DialogButton, DialogTab } from './TabbedDialog';
-import { SideMenu, MenuOption, SideMenuContentInner } from './SideMenu';
+import { SideMenu, MenuOption, DialogContent } from './SideMenu';
 
 // Re-export these for convenience
-export { DialogButton, DialogTab, MenuOption, SideMenuContentInner };
+export { DialogButton, DialogTab, MenuOption, DialogContent };
 
 interface TabDefinition {
   id: number | string;

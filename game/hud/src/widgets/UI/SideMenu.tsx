@@ -73,9 +73,9 @@ export const SideMenuContent = styled('div')`
   border-top: 1px solid rgba(128,128,128,0.4);
 `;
 
-/* SideMenuContentInner: A container for displaying sidemenu content that
+/* DialogContent: A container for displaying content that
  * adds standard padding and allows vertical scrolling. [optional] */
-export const SideMenuContentInner = styled('div')`
+export const DialogContent = styled('div')`
   ${CSS.IS_COLUMN} ${CSS.EXPAND_TO_FIT}
   width: 100%;
   padding: 10px;

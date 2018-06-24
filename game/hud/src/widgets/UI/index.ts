@@ -3,7 +3,7 @@ export {
   DialogDefinition,
   DialogButton,
   MenuOption,
-  SideMenuContentInner,
+  DialogContent,
 } from '../../widgets/UI/TabbedDialogWithSideMenu';
 export { Box } from '../../widgets/UI/Box';
 export { SubHeading } from '../../widgets/UI/SubHeading';
