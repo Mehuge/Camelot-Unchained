@@ -255,6 +255,21 @@ export default {
         },
       },
       {
+        name: 'sample',
+        tooltip: 'Sample UI',
+        iconClass: 'fa-tasks',
+        icon: (
+          <span className='fa-stack click-effect'>
+            <i className='fa fa-square fa-stack-2x'></i>
+            <i className='fa fa-code fa-stack-1x fa-inverse'></i>
+          </span>
+        ),
+        hidden: false,
+        onClick: () => {
+          events.fire('hudnav--navigate', 'sample');
+        },
+      },
+      {
         name: 'progression',
         tooltip: 'Progression',
         iconClass: 'fa-line-chart',
