@@ -135,6 +135,9 @@ const DialogNavigation = styled('div')`
   margin-bottom: 10px;
   z-index: 1;
   box-shadow: inset 0 0 60px rgba(0,0,0,0.8);
+  &.bar-only {
+    height: 28px;
+  }
 `;
 
 const DialogNavInnerBorder = styled('div')`
@@ -158,6 +161,9 @@ const DialogNavInnerBorder = styled('div')`
   }
   &.no-bottom-border::before {
     border-bottom: 0;
+  }
+  &.bar-only {
+    height: 32px;
   }
 `;
 
@@ -287,6 +293,7 @@ interface DialogProps {
   name?: string;               // dialog name (used for serialisation)
   title: string;
   onClose: () => void;
+  heading?: boolean;
   tabs?: DialogButton[];
   renderNav?: () => any;
   renderHeader?: () => any;
@@ -336,10 +343,17 @@ export class TabbedDialog extends React.PureComponent<DialogProps, DialogState> 
     this.restoreTab(next);
   }
   public render() {
-    const { tabs, children, renderNav, renderHeader } = this.props;
+    const { tabs, children, renderNav, renderHeader, heading } = this.props;
     const activeTab = this.state.activeTab || (tabs && tabs[0]);
+    const cls = [];
+    const clsInner = [];
+    if (heading === false) {
+      cls.push('bar-only');
+      clsInner.push('bar-only');
+    }
+    if (renderHeader) clsInner.push('no-bottom-border');
     return (
-      <DialogContainer className={`has-title cse-scroller-thumbonly`} data-id='dialog-container'>
+      <DialogContainer className={`has-title cse-ui-scroller-thumbonly`} data-id='dialog-container'>
         <DialogTitle>{this.props.title}</DialogTitle>
         <DialogWindow data-id='dialog-window'>
           <OrnamentTopLeft/>
@@ -349,12 +363,15 @@ export class TabbedDialog extends React.PureComponent<DialogProps, DialogState> 
             e.preventDefault();
           }}/>
           </OrnamentTopRight>
-          <DialogNavigation data-id='dialog-heading'>
-            <DialogNavInnerBorder className={renderHeader ? 'no-bottom-border' : ''}/>
-            { renderHeader && renderHeader() ||
-                <DialogNavigationTabs>
-                { renderNav && renderNav() || this.renderTabs(activeTab) }
-                </DialogNavigationTabs>
+          <DialogNavigation className={cls.join()} data-id='dialog-heading'>
+            <DialogNavInnerBorder className={clsInner.join()}/>
+            { renderHeader && renderHeader() || (
+                heading !== false && (
+                  <DialogNavigationTabs>
+                  { renderNav && renderNav() || this.renderTabs(activeTab) }
+                  </DialogNavigationTabs>
+                )
+              )
             }
           </DialogNavigation>
           { children && children(activeTab) }
