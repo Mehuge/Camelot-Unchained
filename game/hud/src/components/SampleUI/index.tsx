@@ -29,17 +29,16 @@ const samples = [
   Sample3,
 ];
 
-export class SampleUI extends React.PureComponent<void, void> {
-  public render() {
-    return (
-      <HudNavWindow name='sample'>
-        {(onClose) => {
-          const RenderSample = samples[Date.now() % samples.length];
-          return <RenderSample onClose={onClose}/>;
-        }}
-      </HudNavWindow>
-    );
-  }
+/* tslint:disable:function-name */
+export function SampleUI() {
+  return (
+    <HudNavWindow name='sample'>
+      {(onClose) => {
+        const RenderSample = samples[Date.now() % samples.length];
+        return <RenderSample onClose={onClose}/>;
+      }}
+    </HudNavWindow>
+  );
 }
 
 export default SampleUI;
