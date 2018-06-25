@@ -35,10 +35,14 @@ export class Sample3 extends React.PureComponent<Sample2Props, any> {
   }
 
   private renderContent = (option: MenuOption, tab: DialogButton) => {
+    const style: React.CSSProperties = {
+      padding: 0,
+      marginTop: '-10px',
+      border: '2px solid transparent',
+      borderTop: 0,
+    };
     return (
-      <DialogContent style={{ padding: 0, marginTop: '-10px', border: '2px solid transparent', borderTop: 0; }}>
-        {Go('http://www.camelotunchained.com/')}
-      </DialogContent>
+      <DialogContent style={style}>{Go('http://www.camelotunchained.com/')}</DialogContent>
     );
   }
 }
@@ -47,5 +51,12 @@ export default Sample3;
 
 /* tslint:disable:function-name */
 function Go(url: string) {
-  return <iframe style={{ width: '100%', height: '100%', flex: 1, border: 0, pointerEvents: 'all' }} src={url}></iframe>;
+  const style: React.CSSProperties = {
+    width: '100%',
+    height: '100%',
+    flex: 1,
+    border: 0,
+    pointerEvents: 'all',
+  };
+  return <iframe style={style} src={url}></iframe>;
 }
