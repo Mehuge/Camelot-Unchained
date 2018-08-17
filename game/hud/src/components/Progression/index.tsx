@@ -220,10 +220,9 @@ class Progression extends React.Component<Props, State> {
   }
 
   private collectCharacterDayProgression = async (logIDIndex: number, logIDs: string[]) => {
-    if (!this.state.logIDs[logIDIndex]) {
-      return;
-    }
+    if (!logIDs[logIDIndex])  return;
     try {
+      console.log(`collect day ${logIDIndex}`);
       const res = await webAPI.ProgressionAPI.CollectCharacterDayProgression(
         webAPI.defaultConfig,
         client.loginToken,
@@ -231,6 +230,7 @@ class Progression extends React.Component<Props, State> {
         client.characterID,
         logIDs[logIDIndex],
       );
+      console.log(`done collect day ${logIDIndex} res.ok ${res.ok}`);
       if (!res.ok) {
         const resultData = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
         if (resultData.FieldCodes && resultData.FieldCodes.length > 0) {
@@ -239,7 +239,7 @@ class Progression extends React.Component<Props, State> {
       }
 
       // Recursively collect next days character progression
-      setTimeout(() => this.collectCharacterDayProgression(logIDIndex + 1, logIDs), 500);
+      this.collectCharacterDayProgression(logIDIndex + 1, logIDs);
     } catch (err) {
       console.error(err);
     }
