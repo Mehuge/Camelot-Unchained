@@ -16,8 +16,8 @@ import initEventForwarding from './engineEvents';
 import initLoadingState from './GameClientModels/LoadingState';
 import initPlayerState from './GameClientModels/PlayerState';
 import initEntityState from './GameClientModels/EntityState';
-import initEnemytargetState from './GameClientModels/EnemytargetState';
-import initFriendlytargetState from './GameClientModels/FriendlytargetState';
+import initEnemyTargetState from './GameClientModels/EnemyTargetState';
+import initFriendlyTargetState from './GameClientModels/FriendlyTargetState';
 import initKeyActions from './GameClientModels/KeyActions';
 import initAbilityState from './GameClientModels/AbilityState';
 import initAbilityBarState from './GameClientModels/AbilityBarState';
@@ -72,8 +72,8 @@ export default function(isAttached: boolean) {
   // INIT MODELS
   initLoadingState();
   initPlayerState();
-  initEnemytargetState();
-  initFriendlytargetState();
+  initEnemyTargetState();
+  initFriendlyTargetState();
   initKeyActions();
   initAbilityState();
   initAbilityBarState();
