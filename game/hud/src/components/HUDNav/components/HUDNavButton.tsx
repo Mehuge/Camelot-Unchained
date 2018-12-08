@@ -6,7 +6,7 @@
  */
 
 import * as React from 'react';
-import * as className from 'classnames';
+import className from 'classnames';
 import styled, { css } from 'react-emotion';
 import { utils } from '@csegames/camelot-unchained';
 import { showTooltip, hideTooltip, ShowTooltipPayload } from 'actions/tooltips';

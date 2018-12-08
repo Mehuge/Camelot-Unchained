@@ -37,6 +37,7 @@ import GameMenu from './layoutItems/GameMenu';
 import GameInfo from './layoutItems/GameInfo';
 import ItemPlacementModeManager from './layoutItems/ItemPlacementModeManager';
 import AbilityQueue from './layoutItems/AbilityQueue';
+import ScenarioJoin from './layoutItems/ScenarioJoin';
 
 const localStorageKey = 'cse_hud_layout-state';
 const FORCE_RESET_CODE = '0.8.1'; // if the local storage value for the reset code doesn't match this, then force a reset
@@ -189,6 +190,9 @@ function initialState(): LayoutState {
     ],
     [
       'gameInfo', cloneDeep(GameInfo),
+    ],
+    [
+      'scenarioJoin', cloneDeep(ScenarioJoin),
     ],
   ]);
 

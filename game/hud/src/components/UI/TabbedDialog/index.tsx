@@ -9,6 +9,7 @@ import styled, { css } from 'react-emotion';
 import * as CSS from 'lib/css-helper';
 import * as CONFIG from '../config';
 import { NavButton, NavButtonLabel } from './NavButton';
+import DialogTitle from './DialogTitle';
 
 import {
   DIALOG_FONT,
@@ -46,18 +47,6 @@ const DialogContainer = styled('div')`
       box-sizing: border-box;
     }
   }
-`;
-
-const DialogTitle = styled('div')`
-  position: absolute;
-  top: 7px;
-  text-transform: uppercase;
-  color: ${CONFIG.NORMAL_TEXT_COLOR};
-  text-align: center;
-  font-size: 9px;
-  letter-spacing: 2px;
-  width: 100%;
-  z-index: 2;
 `;
 
 // because the title div is positioned absolute, in the dialog container
@@ -111,6 +100,7 @@ const OrnamentBottomRight = styled('div')`
 `;
 
 /* Dialog Heading */
+const BAR_ONLY = 'bar-only';
 const DialogNavigation = styled('div')`
   ${CSS.DONT_GROW} ${CSS.IS_ROW} ${CSS.CENTERED}
   width: 100%;
@@ -174,6 +164,14 @@ const DialogTabContent = styled('div')`
   margin-top: -10px;
   padding-top: 10px;
   color: white;
+  .no-tabs & {
+    margin-top: 0;
+    padding-top: 25px;
+    background-image: url(images/settings/bag-bg-grey.png);
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-color: rgb(27,26,24);
+  }
 `;
 
 const DialogContent = styled('div')`
@@ -232,7 +230,6 @@ const DialogFooterInnerBorder = styled('div')`
       rgba(${FOOTER_BORDER_COLOR_RGB},0.2)
     ) 1;
   }
-
 `;
 
 const DialogFooterButton = styled('div')`
@@ -288,6 +285,7 @@ export interface DialogButton {
 interface DialogProps {
   name?: string;               // dialog name (used for serialisation)
   title: string;
+  titleIcon?: string;
   onClose: () => void;
   heading?: boolean;
   tabs?: DialogButton[];
@@ -317,6 +315,8 @@ interface DialogState {
     title
       Title is the name of the dialog that will be displayed as the title of
       the dialog.
+    titleIcon
+      Optional icon class name to display before the title.
     tabs
       Is a list of DialogButtons that define the nav buttons that will appear
       at the top of the dialog.
@@ -341,11 +341,15 @@ export class TabbedDialog extends React.PureComponent<DialogProps, DialogState> 
   public render() {
     const { tabs, children, renderNav, renderHeader, heading } = this.props;
     const activeTab = this.state.activeTab || (tabs && tabs[0]);
+    const clsWindow = [];
     const cls = [];
     const clsInner = [];
     if (heading === false) {
-      cls.push('bar-only');
-      clsInner.push('bar-only');
+      cls.push(BAR_ONLY);
+      clsInner.push(BAR_ONLY);
+    }
+    if (!tabs) {
+      clsWindow.push('no-tabs');
     }
     if (renderHeader) clsInner.push('no-bottom-border');
     return (
@@ -353,8 +357,8 @@ export class TabbedDialog extends React.PureComponent<DialogProps, DialogState> 
         className={`has-title cse-ui-scroller-thumbonly`}
         data-id='dialog-container'
       >
-        <DialogTitle>{this.props.title}</DialogTitle>
-        <DialogWindow data-id='dialog-window'>
+        <DialogTitle title={this.props.title} titleIcon={this.props.titleIcon}/>
+        <DialogWindow data-id='dialog-window' className={clsWindow.join(' ')}>
           <OrnamentTopLeft/>
           <OrnamentTopRight>
           <CloseButton className={CloseButtonClass} onClick={(e: React.MouseEvent<HTMLSpanElement>) => {
@@ -362,17 +366,20 @@ export class TabbedDialog extends React.PureComponent<DialogProps, DialogState> 
             e.preventDefault();
           }}/>
           </OrnamentTopRight>
-          <DialogNavigation className={cls.join()} data-id='dialog-heading'>
-            <DialogNavInnerBorder className={clsInner.join()}/>
-            { renderHeader && renderHeader() || (
-                heading !== false && (
-                  <DialogNavigationTabs>
-                  { renderNav && renderNav() || this.renderTabs(activeTab) }
-                  </DialogNavigationTabs>
+          { /* Only render navigation if have tabs or a renderHeader callback */ }
+          { (tabs || renderHeader) && (
+            <DialogNavigation className={cls.join()} data-id='dialog-heading'>
+              <DialogNavInnerBorder className={clsInner.join()}/>
+              { renderHeader && renderHeader() || (
+                  heading !== false && (
+                    <DialogNavigationTabs>
+                    { renderNav && renderNav() || this.renderTabs(activeTab) }
+                    </DialogNavigationTabs>
+                  )
                 )
-              )
-            }
-          </DialogNavigation>
+              }
+            </DialogNavigation>
+          )}
           { children && children(activeTab) }
           <OrnamentBottomLeft/>
           <OrnamentBottomRight/>
