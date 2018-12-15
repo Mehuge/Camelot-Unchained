@@ -6,7 +6,6 @@
 
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
-// import * as CSS from 'lib/css-helper';
 import { Button } from 'UI/Button';
 
 export const SCENARIO_FONT = `font-family: 'Caudex', serif;`;

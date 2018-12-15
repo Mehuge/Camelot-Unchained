@@ -5,22 +5,22 @@
  */
 
 import { LayoutMode, Edge } from 'components/HUDDrag';
-import ScenarioJoin, { ScenarioJoinDimensions } from 'widgets/ScenarioJoin';
+import { ScenarioButton } from 'widgets/ScenarioButton';
 import HUDZOrder from '../HUDZOrder';
 
 export default {
   position: {
     x: {
-      anchor: Edge.LEFT,
-      offset: 50,
+      anchor: Edge.RIGHT,
+      offset: 0,
     },
     y: {
       anchor: Edge.TOP,
       offset: 230,
     },
     size: {
-      width: ScenarioJoinDimensions.width,
-      height: ScenarioJoinDimensions.height,
+      width: 36,
+      height: 36 * 5,         /* must be at least 36 * (max scenarios + 1) */
     },
     scale: 1,
     opacity: 1,
@@ -32,6 +32,6 @@ export default {
     lockHeight: true,
     lockWidth: true,
   },
-  component: ScenarioJoin,
+  component: ScenarioButton,
   props: {},
 };

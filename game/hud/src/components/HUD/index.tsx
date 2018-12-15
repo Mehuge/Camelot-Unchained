@@ -128,21 +128,21 @@ class HUD extends React.Component<HUDProps, HUDState> {
 
             <ScenarioResults />
 
-            <HUDFullScreen />
-            <AbilityBarContainer id={'abilitybar'}>
-              <AbilityBar />
-            </AbilityBarContainer>
-            <ContextMenu />
-            <TooltipView />
-            <PassiveAlert />
-            { locked ? null :
-              <HUDEditor
-                widgets={widgets}
-                selectedWidget={ this.state.selectedWidget ? this.state.selectedWidget : null }
-                dispatch={this.props.dispatch}
-                setSelectedWidget={this.setSelectedWidget}
-              />
-            }
+          <HUDFullScreen />
+          <AbilityBarContainer id='abilitybar'>
+            <AbilityBar />
+          </AbilityBarContainer>
+          <ContextMenu />
+          <TooltipView />
+          <PassiveAlert />
+          { locked ? null :
+            <HUDEditor
+              widgets={widgets}
+              selectedWidget={ this.state.selectedWidget ? this.state.selectedWidget : null }
+              dispatch={this.props.dispatch}
+              setSelectedWidget={this.setSelectedWidget}
+            />
+          }
 
             <Settings />
             <Watermark />
