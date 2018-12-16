@@ -42,7 +42,6 @@ const ScenarioTitle = styled('div')`
 `;
 
 const ScenarioStatus = styled('div')`
-  font-family: ${SCENARIO_FONT}
   position: absolute;
   top: 55px;
   left: 160px;
