@@ -105,7 +105,7 @@ class HUDNavButton extends React.Component<Props, State> {
   }
 
   public componentDidMount() {
-    this.badgeEvents = game.on('hudnav-badge', (state: HUDNavBadgeEventArg) => {
+    this.badgeEvents = game.on('hudnav--badge', (state: HUDNavBadgeEventArg) => {
       if (this.props.name === state.id) {
         this.setState(() => ({ glow: state.glow, badge: state.badge }));
       }
