@@ -47,6 +47,9 @@ const DialogContainer = styled('div')`
       box-sizing: border-box;
     }
   }
+  &.auto-height {
+    height: auto;
+  }
 `;
 
 // because the title div is positioned absolute, in the dialog container
@@ -178,6 +181,9 @@ const DialogContent = styled('div')`
   ${CSS.IS_ROW}
   ${CSS.EXPAND_TO_FIT}
   height: 557px;
+  .auto-height & {
+    height: auto;
+  }
 `;
 
 /* Dialog Footer */
@@ -292,6 +298,7 @@ interface DialogProps {
   renderNav?: () => any;
   renderHeader?: () => any;
   children?: (tab: DialogButton) => any;
+  autoHeight?: boolean;
 }
 
 interface DialogState {
@@ -339,8 +346,9 @@ export class TabbedDialog extends React.PureComponent<DialogProps, DialogState> 
     this.restoreTab(next);
   }
   public render() {
-    const { tabs, children, renderNav, renderHeader, heading } = this.props;
+    const { tabs, children, renderNav, renderHeader, heading, autoHeight } = this.props;
     const activeTab = this.state.activeTab || (tabs && tabs[0]);
+    const clsContainer = ['has-title cse-ui-scroller-thumbonly'];
     const clsWindow = [];
     const cls = [];
     const clsInner = [];
@@ -351,10 +359,11 @@ export class TabbedDialog extends React.PureComponent<DialogProps, DialogState> 
     if (!tabs) {
       clsWindow.push('no-tabs');
     }
+    if (autoHeight) clsContainer.push('auto-height');
     if (renderHeader) clsInner.push('no-bottom-border');
     return (
       <DialogContainer
-        className={`has-title cse-ui-scroller-thumbonly`}
+        className={clsContainer.join(' ')}
         data-id='dialog-container'
       >
         <DialogTitle title={this.props.title} titleIcon={this.props.titleIcon}/>
