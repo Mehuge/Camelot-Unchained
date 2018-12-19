@@ -7,14 +7,12 @@
 import * as React from 'react';
 import styled from 'react-emotion';
 import { TabbedDialog, DialogTab } from 'UI/TabbedDialog';
-import { GraphQL, GraphQLResult } from '@csegames/camelot-unchained/lib/graphql/react';
-import { GraphQLQuery } from '@csegames/camelot-unchained/lib/graphql/query';
-// import { ScenarioSummaryDBModel } from 'gql/interfaces';
-import { Scenario } from './components/Scenario';
+import { GraphQL, GraphQLResult, GraphQLQueryOptions } from '@csegames/camelot-unchained/lib/graphql/react';
+import { Scenario, ScenarioMatch } from './components/Scenario';
 import * as CSS from 'lib/css-helper';
 
-const SCENARIO_JOIN_DIALOG_WIDTH = 706;
-const SCENARIO_JOIN_DIALOG_HEIGHT = 275;
+const SCENARIO_JOIN_DIALOG_WIDTH = 850;
+const SCENARIO_JOIN_DIALOG_HEIGHT = 410;
 
 const HUDNAV_NAVIGATE = 'navigate';
 const ME = 'scenario-join';
@@ -29,11 +27,29 @@ export const ScenarioJoinDimensions: Size = {
   height: SCENARIO_JOIN_DIALOG_HEIGHT,
 };
 
-const scenarioQuery = (): Partial<GraphQLQuery> => ({
-  namedQuery: 'scenarioSummary',
-  variables: {
-    shardID: game.shardID,
-  },
+const scenarioQuery = (): Partial<GraphQLQueryOptions> => ({
+  pollInterval: 10000,
+  query: `{
+    myScenarioQueue {
+      availableMatches {
+        id
+        name
+        icon
+        isQueued
+        gamesInProgress
+        charactersNeededToStartNextGameByFaction {
+          tdd
+          viking
+          arthurian
+        }
+        totalBackfillsNeededByFaction {
+          tdd
+          viking
+          arthurian
+        }
+      }
+    }
+  }`,
 });
 
 const ScenarioJoinWrapper = styled('div')`
@@ -41,13 +57,36 @@ const ScenarioJoinWrapper = styled('div')`
   height: 100%;
 `;
 
+const LoadingScenarios = styled('div')`
+  ${CSS.IS_COLUMN}
+  ${CSS.DONT_GROW}
+  width: 100%;
+  min-height: 140px;
+  font-size: 30px;
+  text-align: center;
+  padding-top: 70px;
+`;
+
+const ScenariosContainer = styled('div')`
+  ${CSS.IS_COLUMN}
+  ${CSS.DONT_GROW}
+  width: 100%;
+  height: auto;
+  max-height: 370px;
+  padding-bottom: 10px;
+  padding-top: 5px;
+  box-sizing: border-box !important;
+`;
+
 const Scenarios = styled('div')`
   ${CSS.IS_COLUMN}
   ${CSS.DONT_GROW}
-  padding: 5px 10px 0 10px;
+  padding: 0 10px 0 10px;
+  box-sizing: border-box!important;
   width: 100%;
   height: 100%;
-  box-sizing: border-box!important;
+  overflow-y: auto;
+  pointer-events: all;
 `;
 
 interface ScenarioJoinState {
@@ -59,6 +98,7 @@ interface ScenarioJoinProps {
 
 export class ScenarioJoin extends React.Component<ScenarioJoinProps, ScenarioJoinState> {
   private evh: EventHandle;
+  private scenarios: ScenarioMatch[];
   constructor(props: ScenarioJoinProps) {
     super(props);
     this.state = { visible: false };
@@ -71,24 +111,26 @@ export class ScenarioJoin extends React.Component<ScenarioJoinProps, ScenarioJoi
     this.evh = null;
   }
   public render() {
-    return this.state.visible ? (
+    const { visible } = this.state;
+    return visible ? (
       <ScenarioJoinWrapper data-input-group='block'>
         <TabbedDialog data-input-group='block'
-          name='scenarioJoin' title={'Scenarios'} titleIcon='icon-scenario' onClose={this.onClose}>
-          {() => 1
-            /* Temp dummy data (no idea what real data will look like at this point) */
-            ? (this.renderScenarios({ scenarios: [
-              { id: 1, name: 'Point Capture', available: false },
-              { id: 2, name: 'Deathmatch', available: true, playersNeeded: {
-                tdd: 7,
-                vik: 9,
-                art: 9,
-              }},
-            ]}))
-            : (
-            <GraphQL query={scenarioQuery()}>{
-              (results: GraphQLResult<{ scenarios: any }>) => this.renderScenarios(results)
-            }</GraphQL>
+            name='scenarioJoin' title={'Scenarios'} titleIcon='icon-scenario' autoHeight={true}
+            onClose={this.onClose}>
+          {() => (
+            <DialogTab>
+              <GraphQL query={scenarioQuery()}>
+                {(results: GraphQLResult<any>): JSX.Element => {
+                  if (!results.loading && (!results.lastError || results.lastError === 'OK') && results.data) {
+                    const myScenarioQueue = results.data.myScenarioQueue;
+                    if (myScenarioQueue && myScenarioQueue.availableMatches) {
+                      this.scenarios = results.data.myScenarioQueue.availableMatches;
+                    }
+                  }
+                  return this.scenarios ? this.renderScenarios() : this.loading();
+                }}
+              </GraphQL>
+            </DialogTab>
           )}
         </TabbedDialog>
       </ScenarioJoinWrapper>
@@ -104,14 +146,19 @@ export class ScenarioJoin extends React.Component<ScenarioJoinProps, ScenarioJoi
     }
   }
 
-  private renderScenarios = (results: any) => {
+  private renderScenarios = () => {
+    const scenarios = this.scenarios;
     return (
-      <DialogTab>
-        <Scenarios>
-          { results.scenarios.map((scenario: any) => <Scenario info={scenario}></Scenario>) }
+      <ScenariosContainer>
+        <Scenarios className='cse-ui-scroller-thumbonly'>
+          { scenarios.map((scenario: ScenarioMatch) => <Scenario info={scenario}></Scenario>) }
         </Scenarios>
-      </DialogTab>
+      </ScenariosContainer>
     );
+  }
+
+  private loading = () => {
+    return <LoadingScenarios>Loading ...</LoadingScenarios>;
   }
 
   private onClose = () => {

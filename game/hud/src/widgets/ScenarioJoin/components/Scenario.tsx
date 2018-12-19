@@ -13,7 +13,8 @@ export const SCENARIO_FONT = `font-family: 'Caudex', serif;`;
 const ScenarioContainer = styled('div')`
   display: block;
   position: relative;
-  height: 112px;
+  min-height: 112px;
+  max-height: 112px;
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
@@ -24,28 +25,27 @@ const ScenarioContainer = styled('div')`
   box-sizing: border-box!important;
 `;
 
-const scenarioBgs = {
-  1: 'capture-point',
-  2: 'deathmatch',
-};
-
 const ScenarioTitle = styled('div')`
   ${SCENARIO_FONT}
   position: absolute;
   top: 20px;
   left: 160px;
-  width: 300px;
-  font-size: 25px;
+  width: 450px;
+  font-size: 20px;
   color: #f5d797;
   text-transform: uppercase;
   letter-spacing: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 1em;
 `;
 
 const ScenarioStatus = styled('div')`
   position: absolute;
   top: 55px;
   left: 160px;
-  width: 300px;
+  width: 450px;
   font-size: 12px;
   letter-spacing: 1px;
   line-height: 14px;
@@ -57,16 +57,32 @@ const ScenarioStatus = styled('div')`
 const ScenarioButton = css(`
   position: absolute;
   top: 30px;
-  left: 500px;
+  right: 42px;
   width: 152px;
   height: 42px;
   line-height: 42px;
   font-size: 12px;
 `);
 
+interface FactionCounts {
+  tdd: number;
+  viking: number;
+  arthurian: number;
+}
+
+export interface ScenarioMatch {
+  id: string;
+  name: string;
+  icon: string;
+  isQueued: boolean;
+  gamesInProgress: number;
+  charactersNeededToStartNextGameByFaction: FactionCounts;
+  totalBackfillsNeededByFaction: FactionCounts;
+}
+
 interface ScenarioProps {
   style?: any;
-  info: any;
+  info: ScenarioMatch;
 }
 
 interface ScenarioState {
@@ -81,11 +97,13 @@ export class Scenario extends React.PureComponent<ScenarioProps, ScenarioState> 
     const bg = css(`
       background-image:
         linear-gradient(to right, #0000, #000 225px),
-        url(images/scenario/join/${scenarioBgs[this.props.info.id]}-bg.png);
+        url(${this.props.info.icon});
     `);
     let status;
-    if (this.props.info.available) {
-      status = `PLAYERS NEEDED TO START NEXT GAME:\n7 TDD / 9 VKK / 9 ART`;
+    let needed;
+    if (needed = this.isAvailable(this.props.info)) {
+      status = `PLAYERS NEEDED TO START NEXT GAME:\n`
+        + `${needed.tdd} TDD / ${needed.viking} VKK / ${needed.arthurian} ART`;
     } else {
       status = 'Scenario Not Available';
     }
@@ -96,6 +114,20 @@ export class Scenario extends React.PureComponent<ScenarioProps, ScenarioState> 
         <Button css={ScenarioButton}>Find Match</Button>
       </ScenarioContainer>
     );
+  }
+  private isAvailable(info: ScenarioMatch) {
+    const needed = info.charactersNeededToStartNextGameByFaction;
+    switch (game.selfPlayerState.faction) {
+      case Faction.TDD:
+        if (needed.tdd > 0) return needed;
+        break;
+      case Faction.Viking:
+        if (needed.viking > 0) return needed;
+        break;
+      case Faction.Arthurian:
+        if (needed.arthurian > 0) return needed;
+        break;
+    }
   }
 }
 
