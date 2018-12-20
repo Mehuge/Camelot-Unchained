@@ -168,7 +168,7 @@ export class ScenarioButton extends React.Component<Props, State> {
             <ToolTipContent
               style={{ backgroundImage: `
                   linear-gradient(to right, #0000, #000 100px),
-                  url(images/scenario/join/${scenarios[hover].id}-bg.png)
+                  url(${scenarios[hover].id})
                 ` }}>
               <ToolTipTitle>{scenarios[hover].name}</ToolTipTitle>
               <ToolTipSubTitle>Click To Join</ToolTipSubTitle>

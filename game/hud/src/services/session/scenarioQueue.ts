@@ -4,10 +4,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { query, GraphQLQuery, GraphQLErrorResult, QueryOptions } from '@csegames/camelot-unchained/lib/graphql/query';
-import { RequestOptions } from 'https';
+import { query, GraphQLQuery, GraphQLErrorResult } from '@csegames/camelot-unchained/lib/graphql/query';
+import { RequestOptions } from '@csegames/camelot-unchained/lib/utils/request';
 
-export function gqlQuery(query: string | GraphQLQuery, options: RequestOptions) {
+export function gqlQuery(q: GraphQLQuery, options: RequestOptions = {}) {
   const requestOptions: RequestOptions = {
     headers: Object.assign({
       'api-version': `${game.apiVersion}`,
@@ -18,10 +18,10 @@ export function gqlQuery(query: string | GraphQLQuery, options: RequestOptions) 
       Accept: 'application/json',
     }, options.headers),
   };
-  query(scenarioQuery, {
+  return query(q, {
     url: game.webAPIHost + '/graphql',
     requestOptions,
-  }).then(onload, onerror);
+  });
 }
 
 interface FactionCounts {
@@ -68,7 +68,7 @@ export let scenarios: ScenarioMatch[];
 let watchers = 0;
 let timer: NodeJS.Timer;
 
-function onload(results: GraphQLErrorResult) {
+function onload(results: any) {
   console.dir(results);
   if (results.ok && results.data) {
     const myScenarioQueue = results.data.myScenarioQueue;
@@ -82,24 +82,12 @@ function onload(results: GraphQLErrorResult) {
   }
 }
 
-function onerror(reason: any) {
+function onerror(reason: GraphQLErrorResult) {
   console.error(reason);
 }
 
 function poll() {
-  query(scenarioQuery, {
-    url: game.webAPIHost + '/graphql',
-    requestOptions: {
-      headers: {
-        'api-version': `${game.apiVersion}`,
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${game.accessToken}`,
-        characterId: game.selfPlayerState.characterID,
-        shardId: `${game.shardID}`,
-        Accept: 'application/json',
-      },
-    },
-  }).then(onload, onerror);
+  gqlQuery(scenarioQuery).then(onload, onerror);
 }
 
 // Incrememnt watchers, cancel current poll interval and start a new one.
