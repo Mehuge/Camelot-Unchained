@@ -233,6 +233,7 @@ export class ScenarioButton extends React.Component<Props, State> {
     const scenarios = this.scenarios;
     const available = scenarios.reduce((total, scenario) => scenarioIsAvailable(scenario) ? total + 1 : total, 0);
     if (available) {
+      game.trigger('hudnav--badge', { id: 'scenario-join', glow: true, badge: available });
       // available, turn on glow, and setup pulsing timer
       if (!this.pulsing) {
         this.setState(() => ({ on: true }));
@@ -240,6 +241,7 @@ export class ScenarioButton extends React.Component<Props, State> {
       }
     } else {
       // not available, stop pulsing
+      game.trigger('hudnav--badge', { id: 'scenario-join', glow: false, badge: 0 });
       if (this.pulsing) {
         clearInterval(this.pulsing);
         this.pulsing = null;
