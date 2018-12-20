@@ -7,6 +7,7 @@
 import * as React from 'react';
 import styled, { css } from 'react-emotion';
 import { Button } from 'UI/Button';
+import { ScenarioMatch, scenarioIsAvailable } from 'services/session/scenarioQueue';
 
 export const SCENARIO_FONT = `font-family: 'Caudex', serif;`;
 
@@ -64,25 +65,9 @@ const ScenarioButton = css(`
   font-size: 12px;
 `);
 
-interface FactionCounts {
-  tdd: number;
-  viking: number;
-  arthurian: number;
-}
-
-export interface ScenarioMatch {
-  id: string;
-  name: string;
-  icon: string;
-  isQueued: boolean;
-  gamesInProgress: number;
-  charactersNeededToStartNextGameByFaction: FactionCounts;
-  totalBackfillsNeededByFaction: FactionCounts;
-}
-
 interface ScenarioProps {
   style?: any;
-  info: ScenarioMatch;
+  scenario: ScenarioMatch;
 }
 
 interface ScenarioState {
@@ -94,14 +79,15 @@ export class Scenario extends React.PureComponent<ScenarioProps, ScenarioState> 
     this.state = {};
   }
   public render() {
+    const { scenario } = this.props;
     const bg = css(`
       background-image:
         linear-gradient(to right, #0000, #000 225px),
-        url(${this.props.info.icon});
+        url(${scenario.icon});
     `);
     let status;
     let needed;
-    if (needed = this.isAvailable(this.props.info)) {
+    if (needed = scenarioIsAvailable(scenario)) {
       status = `PLAYERS NEEDED TO START NEXT GAME:\n`
         + `${needed.tdd} TDD / ${needed.viking} VKK / ${needed.arthurian} ART`;
     } else {
@@ -109,25 +95,11 @@ export class Scenario extends React.PureComponent<ScenarioProps, ScenarioState> 
     }
     return (
       <ScenarioContainer css={bg} data-id='scenario-container' style={this.props.style}>
-        <ScenarioTitle>{this.props.info.name}</ScenarioTitle>
+        <ScenarioTitle>{scenario.name}</ScenarioTitle>
         <ScenarioStatus>{status}</ScenarioStatus>
         <Button css={ScenarioButton}>Find Match</Button>
       </ScenarioContainer>
     );
-  }
-  private isAvailable(info: ScenarioMatch) {
-    const needed = info.charactersNeededToStartNextGameByFaction;
-    switch (game.selfPlayerState.faction) {
-      case Faction.TDD:
-        if (needed.tdd > 0) return needed;
-        break;
-      case Faction.Viking:
-        if (needed.viking > 0) return needed;
-        break;
-      case Faction.Arthurian:
-        if (needed.arthurian > 0) return needed;
-        break;
-    }
   }
 }
 

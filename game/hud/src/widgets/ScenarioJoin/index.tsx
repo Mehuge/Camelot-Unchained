@@ -7,9 +7,11 @@
 import * as React from 'react';
 import styled from 'react-emotion';
 import { TabbedDialog, DialogTab } from 'UI/TabbedDialog';
-import { GraphQL, GraphQLResult, GraphQLQueryOptions } from '@csegames/camelot-unchained/lib/graphql/react';
-import { Scenario, ScenarioMatch } from './components/Scenario';
+import { ScenarioMatch, startPollingScenarioQueue, stopPollingScenarioQueue } from 'services/session/scenarioQueue';
+import { Scenario } from './components/Scenario';
 import * as CSS from 'lib/css-helper';
+
+export const SCENARIO_FONT = `font-family: 'Caudex', serif;`;
 
 const SCENARIO_JOIN_DIALOG_WIDTH = 850;
 const SCENARIO_JOIN_DIALOG_HEIGHT = 410;
@@ -26,31 +28,6 @@ export const ScenarioJoinDimensions: Size = {
   width: SCENARIO_JOIN_DIALOG_WIDTH,
   height: SCENARIO_JOIN_DIALOG_HEIGHT,
 };
-
-const scenarioQuery = (): Partial<GraphQLQueryOptions> => ({
-  pollInterval: 10000,
-  query: `{
-    myScenarioQueue {
-      availableMatches {
-        id
-        name
-        icon
-        isQueued
-        gamesInProgress
-        charactersNeededToStartNextGameByFaction {
-          tdd
-          viking
-          arthurian
-        }
-        totalBackfillsNeededByFaction {
-          tdd
-          viking
-          arthurian
-        }
-      }
-    }
-  }`,
-});
 
 const ScenarioJoinWrapper = styled('div')`
   width: 100%;
@@ -91,6 +68,7 @@ const Scenarios = styled('div')`
 
 interface ScenarioJoinState {
   visible: boolean;
+  updated: number;
 }
 
 interface ScenarioJoinProps {
@@ -98,18 +76,28 @@ interface ScenarioJoinProps {
 
 export class ScenarioJoin extends React.Component<ScenarioJoinProps, ScenarioJoinState> {
   private evh: EventHandle;
+  private scenarioUpdate: EventHandle;
   private scenarios: ScenarioMatch[];
+
   constructor(props: ScenarioJoinProps) {
     super(props);
-    this.state = { visible: false };
+    this.state = { visible: false, updated: 0 };
   }
+
   public componentDidMount() {
     this.evh = game.on(HUDNAV_NAVIGATE, this.onNavigate);
+    this.scenarioUpdate = game.on('scenario-queue--update', this.onScenarioUpdate);
+    this.scenarios = startPollingScenarioQueue();
   }
+
   public componentWillUnmount() {
+    stopPollingScenarioQueue();
     game.off(this.evh);
+    game.off(this.scenarioUpdate);
     this.evh = null;
+    this.scenarioUpdate = null;
   }
+
   public render() {
     const { visible } = this.state;
     return visible ? (
@@ -119,17 +107,7 @@ export class ScenarioJoin extends React.Component<ScenarioJoinProps, ScenarioJoi
             onClose={this.onClose}>
           {() => (
             <DialogTab>
-              <GraphQL query={scenarioQuery()}>
-                {(results: GraphQLResult<any>): JSX.Element => {
-                  if (!results.loading && (!results.lastError || results.lastError === 'OK') && results.data) {
-                    const myScenarioQueue = results.data.myScenarioQueue;
-                    if (myScenarioQueue && myScenarioQueue.availableMatches) {
-                      this.scenarios = results.data.myScenarioQueue.availableMatches;
-                    }
-                  }
-                  return this.scenarios ? this.renderScenarios() : this.loading();
-                }}
-              </GraphQL>
+              { this.scenarios ? this.renderScenarios() : this.loading() }
             </DialogTab>
           )}
         </TabbedDialog>
@@ -151,7 +129,7 @@ export class ScenarioJoin extends React.Component<ScenarioJoinProps, ScenarioJoi
     return (
       <ScenariosContainer>
         <Scenarios className='cse-ui-scroller-thumbonly'>
-          { scenarios.map((scenario: ScenarioMatch) => <Scenario info={scenario}></Scenario>) }
+          { scenarios.map((scenario: ScenarioMatch) => <Scenario scenario={scenario}></Scenario>) }
         </Scenarios>
       </ScenariosContainer>
     );
@@ -163,6 +141,11 @@ export class ScenarioJoin extends React.Component<ScenarioJoinProps, ScenarioJoi
 
   private onClose = () => {
     game.trigger(HUDNAV_NAVIGATE, ME);
+  }
+
+  private onScenarioUpdate = (scenarios: ScenarioMatch[]) => {
+    this.scenarios = scenarios;
+    this.setState(() => ({ updated: Date.now() }));
   }
 }
 

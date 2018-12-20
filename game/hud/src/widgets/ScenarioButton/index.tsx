@@ -9,8 +9,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import styled  from 'react-emotion';
 import * as CSS from 'lib/css-helper';
-
-export const SCENARIO_FONT = `font-family: 'Caudex', serif;`;
+import { SCENARIO_FONT } from 'widgets/ScenarioJoin';
+import {
+  ScenarioMatch,
+  startPollingScenarioQueue,
+  stopPollingScenarioQueue,
+  scenarioIsAvailable,
+} from 'services/session/scenarioQueue';
 
 const Container = styled('div')`
 `;
@@ -109,60 +114,51 @@ const ToolTipSubTitle = styled('div')`
 interface Props {
 }
 
-interface Scenario {
-  id: string;
-  active: string;
-  name: string;
-}
-
 interface State {
   visible: boolean;
   active: boolean;
   on: boolean;
-  scenarios: Scenario[];
   open: boolean;
   hover: number;
+  updated: number;
 }
 
 export class ScenarioButton extends React.Component<Props, State> {
-  private pulsar: NodeJS.Timer;
+  private pulsing: NodeJS.Timer;
   private nodes: any[] = [];
+  private scenarios: ScenarioMatch[];
+  private scenarioUpdate: EventHandle;
+
   constructor(props: Props) {
     super(props);
     this.state = {
       visible: true,
       active: false,
       on: false,
-      scenarios: [],
       open: false,
       hover: null,
+      updated: 0,
     };
   }
   public componentDidMount() {
-    // register for scenario notifications
-    this.setState((state: State) => {
-      if (true /* new state is active */ && !this.pulsar) {
-        this.pulsar = setInterval(() => this.setState((state: any) => ({ on: !state.on })), 1000);
-      }
-      return Object.assign({}, state, {
-        active: true,
-        scenarios: [
-          { id: 'capture-point', active: true, name: 'Point Capture' },
-          { id: 'deathmatch', active: true, name: 'Deathmatch' },
-        ],
-      });
-    });
+    this.scenarios = startPollingScenarioQueue();
+    this.scenarioUpdate = game.on('scenario-queue--update', this.onScenarioUpdate);
   }
+
   public componentWillUnmount() {
-    // unregister for scenario notifications
-    if (this.pulsar) {
-      clearInterval(this.pulsar);
-      this.pulsar = null;
+    stopPollingScenarioQueue();
+    if (this.pulsing) {
+      clearInterval(this.pulsing);
+      this.pulsing = null;
     }
+    game.off(this.scenarioUpdate);
+    this.scenarioUpdate = null;
   }
+
   public render() {
     const cls = ['icon-scenario'];
-    const { visible, scenarios, open, on, hover } = this.state;
+    const { visible, open, on, hover } = this.state;
+    const scenarios = this.scenarios;
     if (!visible) return null;
     cls.push(on ? 'lit' : 'unlit');
     return (
@@ -186,7 +182,7 @@ export class ScenarioButton extends React.Component<Props, State> {
                 <IconButton onMouseOver={this.hover} onMouseOut={this.hover}>
                   <Icon
                     ref={(node: any) => this.nodes[index] = ReactDOM.findDOMNode(node)}
-                    style={{ backgroundImage: `url(images/scenario/join/${scenario.id}-bg.png)` }}
+                    style={{ backgroundImage: `url(${scenario.icon})` }}
                     />
                 </IconButton>
               ))
@@ -203,12 +199,13 @@ export class ScenarioButton extends React.Component<Props, State> {
 
   private hover = (e: React.MouseEvent) => {
     const nodes = this.nodes;
+    const scenarios = this.scenarios;
     let index: number;
-    let scenario: Scenario;
+    let scenario: ScenarioMatch;
     for (let i = 0; i < this.nodes.length; i++) {
       if (nodes[i] === e.target) {
         console.log(`${e.type} ${i}`);
-        scenario = this.state.scenarios[index = i];
+        scenario = scenarios[index = i];
         break;
       }
     }
@@ -223,6 +220,31 @@ export class ScenarioButton extends React.Component<Props, State> {
           this.setState({ hover: null });
         }
         break;
+    }
+  }
+
+  private onScenarioUpdate = (scenarios: ScenarioMatch[]) => {
+    this.scenarios = scenarios;
+    this.setState(() => ({ updated: Date.now() }));
+    this.checkIfScenariosAvailable();
+  }
+
+  private checkIfScenariosAvailable() {
+    const scenarios = this.scenarios;
+    const available = scenarios.reduce((total, scenario) => scenarioIsAvailable(scenario) ? total + 1 : total, 0);
+    if (available) {
+      // available, turn on glow, and setup pulsing timer
+      if (!this.pulsing) {
+        this.setState(() => ({ on: true }));
+        this.pulsing = setInterval(() => this.setState((state: any) => ({ on: !state.on })), 1000);
+      }
+    } else {
+      // not available, stop pulsing
+      if (this.pulsing) {
+        clearInterval(this.pulsing);
+        this.pulsing = null;
+        this.setState(() => ({ on: false }));
+      }
     }
   }
 }
