@@ -170,13 +170,12 @@ export class KeybindRow extends React.Component<Props, State> {
     let content: JSX.Element = null;
     switch (this.state.mode) {
       case KeybindMode.Idle: return null;
-      case KeybindMode.ListeningForKey: {
+      case KeybindMode.ListeningForKey:
         content = (
           <ListeningDialog keybind={this.state.keybind} onRemoveBind={this.onRemoveBind} onClose={this.cancel} />
         );
-      }
         break;
-      case KeybindMode.ConfirmBind: {
+      case KeybindMode.ConfirmBind:
         const conflicts = checkForConflicts(this.state.keybind.id, this.state.newBind);
         content = (
           <ConfirmBindDialog
@@ -188,7 +187,6 @@ export class KeybindRow extends React.Component<Props, State> {
             onNoClick={this.cancel}
           />
         );
-      }
         break;
     }
 
@@ -217,6 +215,7 @@ export class KeybindRow extends React.Component<Props, State> {
   }
 
   private onRemoveBind = () => {
+    this.cancel();                  // we were listening, need to cancel
     this.setState((state) => {
       const newState = {
         ...state,
@@ -259,6 +258,7 @@ export class KeybindRow extends React.Component<Props, State> {
   private cancel = () => {
     if (this.listenPromise) {
       this.listenPromise.cancel();
+      this.listenPromise = null;
     }
     this.setState({
       mode: KeybindMode.Idle,
